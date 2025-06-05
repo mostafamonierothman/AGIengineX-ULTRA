@@ -1,0 +1,4 @@
+uvloop
+fastapi
+httpx
+requests
