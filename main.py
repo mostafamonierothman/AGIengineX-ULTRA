@@ -1,26 +1,42 @@
-# main.py
-import uvloop
-import asyncio
-from supervisor import SupervisorAgent
-from fastapi import FastAPI
-import threading
+# app.py
 
-# Use uvloop for faster event loop
-uvloop.install()
+from fastapi import FastAPI, Request
+from agents.next_move_agent import get_next_move
+from agents.opportunity_agent import get_opportunity
 
 app = FastAPI()
 
-supervisor = SupervisorAgent()
-
-# Background loop
-def background_loop():
-    asyncio.run(supervisor.run_loop())
-
-@app.on_event("startup")
-def startup_event():
-    thread = threading.Thread(target=background_loop, daemon=True)
-    thread.start()
-
+# Root endpoint
 @app.get("/")
 def root():
     return {"status": "AGIengineX-ULTRA is LIVE 🚀"}
+
+# next_move endpoint
+@app.get("/next_move")
+def next_move_endpoint():
+    result = get_next_move()
+    return {"next_move": result}
+
+# opportunity endpoint
+@app.get("/opportunity")
+def opportunity_endpoint():
+    result = get_opportunity()
+    return {"opportunity": result}
+
+# run_agent endpoint (POST)
+@app.post("/run_agent")
+async def run_agent(request: Request):
+    data = await request.json()
+    agent_name = data.get("agent_name")
+    input_data = data.get("input", {})
+
+    if agent_name == "next_move_agent":
+        result = get_next_move()
+        return {"next_move": result}
+
+    elif agent_name == "opportunity_agent":
+        result = get_opportunity()
+        return {"opportunity": result}
+
+    else:
+        return {"error": "Unknown agent"}
