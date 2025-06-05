@@ -1,4 +1,4 @@
-# app.py
+# main.py
 
 from fastapi import FastAPI, Request
 from agents.next_move_agent import get_next_move
