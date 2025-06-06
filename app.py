@@ -1,4 +1,4 @@
-# main.py
+# app.py
 
 from agents.next_move_agent import get_next_move
 from agents.opportunity_agent import get_opportunity
@@ -54,5 +54,7 @@ with gr.Blocks() as demo:
 
 # === FINAL: Export app for HF Spaces ===
 app = demo
+
+# === Add launch() for local & HF Gradio ===
 if __name__ == "__main__":
     app.launch(server_name="0.0.0.0", server_port=7860)
