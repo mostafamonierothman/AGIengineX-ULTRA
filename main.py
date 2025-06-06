@@ -21,41 +21,37 @@ def run_any_agent(agent_name, input_text):
         result = get_opportunity()
     else:
         result = f"Unknown agent: {agent_name}"
+    
     return f"Agent [{agent_name}] Result: {result} | Input: {input_text}"
 
 # === Gradio Blocks UI ===
 
 with gr.Blocks() as demo:
-    gr.Markdown("# 🤖 AGIengineX Ultra — PURE Gradio UI 🚀")
+    gr.Markdown("# AGIengineX 🚀 Ultra Gradio UI")
     gr.Markdown("Test your agents below:")
 
-    # --- Next Move Agent ---
-    gr.Markdown("### Run Next Move Agent")
-    next_move_btn = gr.Button("Run Next Move Agent")
-    next_move_output = gr.Textbox(label="Next Move Output")
+    # Next Move Section
+    with gr.Row():
+        next_move_btn = gr.Button("Run Next Move Agent")
+        next_move_output = gr.Textbox(label="Next Move Output")
 
     next_move_btn.click(fn=run_next_move_ui, outputs=next_move_output)
 
-    # --- Opportunity Agent ---
-    gr.Markdown("### Run Opportunity Agent")
-    opp_btn = gr.Button("Run Opportunity Agent")
-    opp_output = gr.Textbox(label="Opportunity Output")
+    # Opportunity Section
+    with gr.Row():
+        opp_btn = gr.Button("Run Opportunity Agent")
+        opp_output = gr.Textbox(label="Opportunity Output")
 
     opp_btn.click(fn=run_opportunity_ui, outputs=opp_output)
 
-    # --- Generic Run Agent ---
-    gr.Markdown("### Run Any Agent")
-    agent_name_input = gr.Textbox(label="Agent Name (e.g. next_move_agent)")
-    agent_input_text = gr.Textbox(label="Input (optional, free text)")
-    run_agent_btn = gr.Button("Run Agent")
-    run_agent_output = gr.Textbox(label="Agent Result")
+    # Run Any Agent Section
+    with gr.Row():
+        agent_input = gr.Textbox(label="Agent Name", placeholder="e.g. next_move_agent")
+        input_text = gr.Textbox(label="Input Text", placeholder="Optional input for agent")
+        run_btn = gr.Button("Run Any Agent")
+        run_output = gr.Textbox(label="Agent Output")
 
-    run_agent_btn.click(
-        fn=run_any_agent,
-        inputs=[agent_name_input, agent_input_text],
-        outputs=run_agent_output
-    )
+    run_btn.click(fn=run_any_agent, inputs=[agent_input, input_text], outputs=run_output)
 
-# === Launch Gradio app ===
-if __name__ == "__main__":
-    demo.launch()
+# === FINAL: Export app for HF Spaces ===
+app = demo
