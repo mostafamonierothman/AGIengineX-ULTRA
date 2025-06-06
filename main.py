@@ -1,8 +1,10 @@
 # main.py
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from agents.next_move_agent import get_next_move
 from agents.opportunity_agent import get_opportunity
+import gradio as gr
 
+# FastAPI backend (can also be used by Gradio backend)
 app = FastAPI()
 
 @app.get("/")
@@ -20,7 +22,7 @@ def opportunity_endpoint():
     return {"opportunity": result}
 
 @app.post("/run_agent")
-async def run_agent(request):
+async def run_agent(request: Request):
     data = await request.json()
     agent_name = data.get("agent_name")
     input_data = data.get("input", {})
@@ -38,6 +40,26 @@ async def run_agent(request):
         "result": result
     }
 
-# NOW wrap in Gradio so HF can serve it properly:
-import gradio as gr
-gr.Interface(fn=lambda: "AGIengineX API Running", inputs=[], outputs="text").launch(app=app)
+# Now wrap in Gradio so HF can serve it properly
+def run_next_move():
+    return get_next_move()
+
+def run_opportunity():
+    return get_opportunity()
+
+with gr.Blocks() as demo:
+    gr.Markdown("# 🚀 AGIengineX Control Panel")
+
+    with gr.Row():
+        btn_next_move = gr.Button("Run Next Move Agent")
+        output_next_move = gr.Textbox(label="Next Move Result")
+
+    with gr.Row():
+        btn_opportunity = gr.Button("Run Opportunity Agent")
+        output_opportunity = gr.Textbox(label="Opportunity Result")
+
+    btn_next_move.click(fn=run_next_move, outputs=output_next_move)
+    btn_opportunity.click(fn=run_opportunity, outputs=output_opportunity)
+
+# Gradio runs this app
+demo.launch()
