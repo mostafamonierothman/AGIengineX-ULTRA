@@ -1,10 +1,11 @@
 # main.py
+
 from fastapi import FastAPI, Request
 from agents.next_move_agent import get_next_move
 from agents.opportunity_agent import get_opportunity
 import gradio as gr
 
-# FastAPI backend (can also be used by Gradio backend)
+# FastAPI app (backend for programmatic API)
 app = FastAPI()
 
 @app.get("/")
@@ -40,26 +41,27 @@ async def run_agent(request: Request):
         "result": result
     }
 
-# Now wrap in Gradio so HF can serve it properly
+# Gradio frontend wrapper (for HuggingFace browser interface)
 def run_next_move():
     return get_next_move()
 
 def run_opportunity():
     return get_opportunity()
 
+# Define simple Gradio interface
 with gr.Blocks() as demo:
-    gr.Markdown("# 🚀 AGIengineX Control Panel")
+    gr.Markdown("# 🤖 AGIengineX")
+    gr.Markdown("Trigger agents below:")
 
-    with gr.Row():
-        btn_next_move = gr.Button("Run Next Move Agent")
-        output_next_move = gr.Textbox(label="Next Move Result")
+    move_btn = gr.Button("Run Next Move Agent")
+    move_output = gr.Textbox(label="Next Move Result")
 
-    with gr.Row():
-        btn_opportunity = gr.Button("Run Opportunity Agent")
-        output_opportunity = gr.Textbox(label="Opportunity Result")
+    opp_btn = gr.Button("Run Opportunity Agent")
+    opp_output = gr.Textbox(label="Opportunity Result")
 
-    btn_next_move.click(fn=run_next_move, outputs=output_next_move)
-    btn_opportunity.click(fn=run_opportunity, outputs=output_opportunity)
+    move_btn.click(run_next_move, outputs=move_output)
+    opp_btn.click(run_opportunity, outputs=opp_output)
 
-# Gradio runs this app
-demo.launch()
+# Launch Gradio app (so HF will serve it)
+if __name__ == "__main__":
+    demo.launch()
