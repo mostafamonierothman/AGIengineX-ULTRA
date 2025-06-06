@@ -1,3 +1,2 @@
-sdk: fastapi
+sdk: gradio
 app_file: main.py
-
