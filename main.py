@@ -21,7 +21,6 @@ def run_any_agent(agent_name, input_text):
         result = get_opportunity()
     else:
         result = f"Unknown agent: {agent_name}"
-    
     return f"Agent [{agent_name}] Result: {result} | Input: {input_text}"
 
 # === Gradio Blocks UI ===
